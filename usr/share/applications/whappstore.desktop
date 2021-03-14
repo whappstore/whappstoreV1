@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=whappstore
+GenericName=whappstore
+Comment=A Multi Hack Tool Kit.
+Exec=pkexec bash /usr/bin/whappstore
+TryExec=pkexec bash /usr/bin/whappstore
+Icon=/usr/share/icons/whpnm.png
+Terminal=true
+Type=Application
+Categories=Programming;Utility;Other;
+Keywords=whappstore;whapptool;pnmtool;hacktoolkit;

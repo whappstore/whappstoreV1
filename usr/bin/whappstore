@@ -1,0 +1,224 @@
+#!/bin/bash
+
+#    White Panther Tool a GUI Mutli Tool Kit for GNU/Linux White Hat PNM OS Project
+#    Copyright (C) 2021  suleymanfatihşimşek&lazypwny
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+setversion="1.0"
+#setroot="/usr/share/whappstore"
+setroot="/home/user/Desktop/whappstore_1.0_x86_64/usr/share/whappstore"
+author="Süleyman Fatih Şimşek"
+
+pacman=("aircrack-ng" "exiv2" "exploitdb" "metasploit" "nbtscan" "masscan" "nbtscan" "netsniff-ng" "ngrep" "ophcrack" "zaproxy" "wpscan" "proxychains-ng" "wireshark-qt" "pixiewps" "reaver" "sleuthkit" "proxytunnel" "ptunnel" "radare2" "socat" "sqlmap" "sslscan" "sslsplit" "tcpdump" "thc-ipv6" "stunnel" "tcpreplay" "swaks" "whois" "wifite")
+aur=("amass" "arp-scan" "autopsy" "binwalk" "bully" "burpsuite" "chntpw" "crackmapexec" "creddump" "crunch" "dirb" "dirbuster" "dmitry" "dns2tcp" "dnsenum" "enum4linux" "fern-wifi-cracker" "fierce" "fping" "guymager" "hashcat" "hashcat-utils" "hashdeep" "hashid" "hash-identifier" "hping" "hotpatch" "hydra" "ike-scan" "inetsim" "iodine" "john" "kismet" "lbd" "macchanger" "magicrescue" "maltego" "maskprocessor" "mitmproxy" "ncrack" "netdiscover" "netmask" "netsed" "nikto" "nmap" "onesixtyone" "patator" "recon-ng" "winexe" "redsocks" "sbd" "pwnat" "responder" "samdump2" "scalpel" "scrounge-ntfs" "seclists" "skipfish" "smbmap" "spiderfoot" "spooftooph" "ssldump" "sslyze" "unix-privesc-check" "voiphopper" "tcpick" "wafw00f" "weevely" "statsprocessor" "udptunnel" "wfuzz" "whatweb" "windows-binaries" "armistage" "python-pypykatz" "theharvester-git" "python-pdfminer")
+other=("legion" "msfdb" "mimikatz" "wordlistctl" "powersploit" "cewl" "sploitctl" "torctl" "webshells" "set")
+
+loadmodule() {
+    [ -e ${setroot}/modules/${1}.sh ] && source ${setroot}/modules/${1}.sh || { echo "Module '${1}' not found." ; exit 1 ; }
+}
+
+loadmodule color
+loadmodule checkroot
+loadmodule netutils
+loadmodule spinners
+loadmodule textutils
+loadmodule language
+
+#checkroot -e
+
+## args
+
+trap byebye INT
+
+byebye() {
+    echo ""
+    exit
+    # rm subsytem of whappstore
+    # random quit message
+}
+
+banner() {
+    if [ -e ${setroot}/banner.chafa ] ; then 
+        cat ${setroot}/banner.chafa
+    fi
+}
+
+getpackman() {
+    case ${1} in
+    [iI]|-[iI])
+        echo "${pacman[${2}]}"
+    ;;
+    [uU]|-[uU])
+        echo "${pacman[${2}]}"
+    ;;
+    esac
+}
+
+getaur() {
+    # BU SATIR AKTIFLESTIRILECEK [ $(command -v yay) ] || { echo "yay not found!" ; exit 1 ; }
+    case ${1} in
+    [iI])
+        xterm -T " ${2} by ${1}" -bg black -e "git clone https://github.com/${1}/${2} ${setroot}/tools/${2}" && { echo -e "Cloned ${green}Successfully$reset ${2}@${setroot}" ; clonestatus=0 ; } || { echo -e "Can ${red}not cloned$reset ${2}" ; clonestatus=1 ; }
+        echo "${aur[${2}]}"
+    ;;
+    [uU])
+        echo "${aur[${2}]}"
+    ;;
+    esac
+}
+
+getother() {
+    echo "${other[${2}]}"
+}
+
+eula() {
+    [ -e ${setroot}/understood ] || clear
+	while :; do
+        	[ -e ${setroot}/understood ] && break || {
+            		echo -e "${red}whappstore usage agreement:$reset
+whappstore tool was developed solely for white hat PNM OS store purposes and whappstore-gorup cannot be held responsible for illegal use.
+1-If you accept this contract, you cannot hold whappstore and the team responsible for illegal activities you have done or will do!
+2-You should write 'i understood and i accept' in the entry below that you have read and understood the agreement.
+3-If you accept the contract, the settings file will be saved in the settings files indicating that you accept
+  this contract.If you change the script and bypass Eula, you still cannot hold the whappstore team responsible.
+  source of code: https://github.com/whappstore\n" 
+        	read -p "please type 'i understood and i accept':> " eula
+        	case $eula in
+            	[iI]" "[uU][nN][dD][eE][rR][sS][tT][oO][oO][dD]" "[aA][nN][dD]" "[iI]" "[aA][cC][cC][eE][pP][tT])
+                	echo "$eula" > ${setroot}/understood
+                	break
+            	;;
+            	*)
+            		centexpad "please retype correctly 'i understood and i accept'"
+            	;;
+        	esac
+	} 
+        done
+}
+
+pacmenu() {
+centexpad "*"
+while :; do
+        echo ""
+        for i in $(seq 0 $(( ${#pacman[@]} - 1 )) ) ; do
+                echo -e "\t[${blue}${i}${reset}] ${yellow}${pacman[$i]}${reset} $([ $(command -v ${pacman[$i]}) ] && echo -e "${Bgreen}🗸" || echo -e "${red}🗶")\t${reset}"
+        done
+        echo -ne "
+    \t[${blue}b${reset}] back to mainmenu
+    \t[${red}e${reset}] exit the tool
+
+    \t${Bcyan}whappstore${red}${setversion}${reset}@${Bpurple}pacman${reset}
+    \t$(randomcolor)⮩ ${reset}" ; read pacmenu
+        case $pacmenu in
+            [0-9]|[0-3][0-9])
+            echo ""
+            centexpad "*"
+            echo ""
+                if [ $(command -v ${pacman[${pacmenu}]}) ] ; then
+    echo -ne "\t[${yellow}up${reset}] update\t[${red}un${reset}] uninstall\t[${green}e${reset}] execute\n
+    \t${Bcyan}whappstore${red}${setversion}${reset}@${Bpurple}${pacman[${pacmenu}]}${reset}
+    \t$(randomcolor)⮩ ${reset}" ; read xtool
+                    case "$xtool" in
+                        [uU][pP])
+                            getpackman -i ${pacmenu}
+                        ;;
+                        [uU][nN])
+                            getpackman -u ${pacmenu}
+                        ;;
+                        [e])
+                            ${pacman[${pacmenu}]}
+                            pressanykeysec 3
+                        ;;
+                    esac
+                else
+                    getpackman -i $pacmenu
+                    pressanykeysec 3
+                fi
+            ;;
+            [bB]|[bB][aA][cC][kK])
+                break
+            ;;
+            [cC]|[cC][lL][eE][aA][rR])
+                clear
+            ;;
+            [eE]|[eE][xX][iI][tT])
+                byebye
+            ;;
+            *)
+                echo ""
+                centexpad "${errors[1]}"
+            ;;
+        esac
+done
+        centexpad "*"
+}
+
+aurmenu() {
+    centexpad "*"
+    echo ""
+    for i in $(seq 0 $(( ${#aur[@]} - 1 )) ) ; do
+            echo -e "\t[${blue}${i}${reset}] ${yellow}${aur[$i]}${reset} $([ $(command -v ${aur[$i]}) ] && echo -e "${Bgreen}🗸" || echo -e "${red}🗶")\t${reset}"
+    done
+    echo ""
+    centexpad "*"
+}
+
+menu() {
+eula
+banner
+while :; do
+        echo -e "
+\t==$(randomcolor)${dialogs[0]}${reset}==
+    ${blue}1-)${reset} pacman
+    ${blue}2-)${reset} aur
+    ${blue}3-)${reset} other
+    ${blue}l-)${reset} chose language
+    ${red}e-)${reset} exit the tool
+        
+    ${dialogs[1]}
+"
+        echo -ne "    ${Bcyan}whappstore${red}${setversion}${reset}@${Bpurple}main${reset}
+    $(randomcolor)⮩ ${reset}" ; read maininput
+        case "$maininput" in
+            1)
+                pacmenu
+            ;;
+            2)
+                aurmenu
+            ;;
+            3)
+                echo "${errors[2]}"
+            ;;
+            [bB][aA][nN][nN][eE][rR])
+                banner
+            ;;
+            [lL]|[lL][aA][nN][gG][uU][aA][gG][eE])
+                source ${setroot}/modules/language.sh -sl
+            ;;
+            [cC]|[cC][lL][eE][aA][rR])
+                clear
+            ;;
+            [eE]|[eE][xX][iI][tT])
+                byebye
+            ;;
+            *)
+                echo ""
+                centexpad "${errors[1]}"
+            ;;
+        esac
+done
+}
+
+menu
